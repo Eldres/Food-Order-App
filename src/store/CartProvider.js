@@ -35,6 +35,34 @@ const cartReducer = (cartState, action) => {
     };
   }
 
+  if (action.type === "REMOVE_ITEM") {
+    const existingCartItemIdx = cartState.items.findIndex(
+      (item) => item.id === action.payload
+    );
+    const existingCartItem = cartState.items[existingCartItemIdx];
+    const updatedTotalAmount = cartState.totalAmount - existingCartItem.price;
+
+    let updatedItems;
+
+    if (existingCartItem.amount === 1) {
+      updatedItems = cartState.items.filter(
+        (item) => item.id !== action.payload
+      );
+    } else {
+      const updatedItem = {
+        ...existingCartItem,
+        amount: existingCartItem.amount - 1,
+      };
+      updatedItems = [...cartState.items];
+      updatedItems[existingCartItemIdx] = updatedItem;
+    }
+
+    return {
+      items: updatedItems,
+      totalAmount: updatedTotalAmount,
+    };
+  }
+
   return defaultCartState;
 };
 
